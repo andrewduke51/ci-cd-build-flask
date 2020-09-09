@@ -1,0 +1,24 @@
+version: 2
+jobs:
+ build:
+   machine: true
+   steps:
+     - checkout
+     - run: |
+         AWS_CRED=$(aws ecr get-login --no-include-email --region ${AWS_DEFAULT_REGION})
+         ${AWS_CRED}
+     # build the application image
+     - run: |
+         cd docker
+         docker build -t flask-app:${CIRCLE_BUILD_NUM} .
+         docker tag flask-app:${CIRCLE_BUILD_NUM} ${AWS_ACC_NUMBER}.dkr.ecr.us-east-1.amazonaws.com/flask-app:${CIRCLE_BUILD_NUM}
+     # deploy the image
+     - run: |
+         cd docker
+         docker push ${AWS_ACC_NUMBER}.dkr.ecr.us-east-1.amazonaws.com/flask-app:${CIRCLE_BUILD_NUM}
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          context: deployment-an
