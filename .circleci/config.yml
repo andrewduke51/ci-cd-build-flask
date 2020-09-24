@@ -15,6 +15,7 @@ jobs:
      # deploy the image
      - run: |
          cd docker
+         date
          docker push ${AWS_ACC_NUMBER}.dkr.ecr.us-east-1.amazonaws.com/flask-app:${CIRCLE_BUILD_NUM}
 workflows:
   version: 2
